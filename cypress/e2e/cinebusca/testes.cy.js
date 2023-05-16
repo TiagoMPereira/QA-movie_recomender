@@ -1,43 +1,85 @@
 /// <reference types="cypress"/>
 
-//Este arquivo é um exemplo para a turma C317 utilizar como base na criação de testes de UI com Cypress.
+describe('Test homepage', () => {
 
-describe('Visit Google', () => {
+    it('Boxes disabled', () => { 
 
-    it('asser is on google', () => { 
-
-        cy.visit("www.google.com");
-        cy.get('#APjFqb').type("cypress");
-        cy.wait(1000);
-        cy.get('#APjFqb').type("{enter}");
-        cy.get('.dmenKe > .cIkxbf > .usJj9c > h3 > .l').should("contain.text", "Why Cypress?")
-        //TODO os seus comandos de teste
-        
+        cy.visit("http://localhost:3000/");
+        cy.get("#genre1").should("have.value", "null");
+        cy.get("#genre2").should("have.value", "null");
+        cy.get("#genre3").should("have.value", "null");
+        cy.get("#language").should("have.value", "null");
+        cy.get("#runtime").should("have.value", "0");
+        cy.get("#release_year").should("have.value", "1900");
     });
-    // it('Cenario de Teste: 2', () => { 
-        
-    //     //TODO os seus comandos de teste
-        
-    // });
-    // it('Cenario de Teste: 3', () => { 
-        
-    //     //TODO os seus comandos de teste
-        
-    // });
-    // it('Cenario de Teste: 4', () => { 
-        
-    //     //TODO os seus comandos de teste
-        
-    // });
-    // it('Cenario de Teste: 5', () => { 
-        
-    //     //TODO os seus comandos de teste
-        
-    // });
-    // it('Cenario de Teste: 6', () => { 
-        
-    //     //TODO os seus comandos de teste
-        
-    // });
-
 });
+
+describe('Movie recommendation', () => {
+
+    it('All fields selected', () => { 
+
+        cy.visit("http://localhost:3000/");
+        cy.get("#genre1").focus().select("action", {force:true});
+        cy.get("#genre2").focus().select("drama", {force:true});
+        cy.get("#genre3").focus().select("family", {force:true});
+        cy.get("#language").focus().select("portuguese", {force:true});
+        cy.get("#runtime").invoke("val", 90).trigger("change");
+        cy.get("#release_year").invoke("val", 2000).trigger("change");
+        cy.get(".submit").focus().click({force:true});
+        cy.get("#movie0_infos").should("have.text", "Hoovey");
+        cy.get("#movie1_infos").should("have.text", "Two Rabbits");
+        cy.get("#movie2_infos").should("have.text", "Soul Surfer");
+
+    });
+});
+
+describe('Return button on recommendation', () => {
+
+    it('Click on return after a recommendation', () => { 
+
+        cy.visit("http://localhost:3000/");
+        cy.get("#genre1").focus().select("action", {force:true});
+        cy.get("#genre2").focus().select("drama", {force:true});
+        cy.get("#genre3").focus().select("family", {force:true});
+        cy.get("#language").focus().select("portuguese", {force:true});
+        cy.get("#runtime").invoke("val", 90).trigger("change");
+        cy.get("#release_year").invoke("val", 2000).trigger("change");
+        cy.get(".submit").focus().click({force:true});
+        cy.get(".return").focus().click({force:true});
+        cy.get("#genre1").should("have.value", "null");
+        cy.get("#genre2").should("have.value", "null");
+        cy.get("#genre3").should("have.value", "null");
+        cy.get("#language").should("have.value", "null");
+        cy.get("#runtime").should("have.value", "0");
+        cy.get("#release_year").should("have.value", "1900");
+
+    });
+});
+
+describe('Empty input', () => {
+
+    it('Empty inputs expect error', () => { 
+
+        cy.visit("http://localhost:3000/");
+        cy.get(".submit").click();
+        cy.get('.title').should("have.text", "MISSING INFORMATION")
+    });
+});
+
+describe('Any button', () => {
+
+    it('Genre and language selected but year and runtime as any', () => { 
+
+        cy.visit("http://localhost:3000/");
+        cy.get("#genre1").focus().select("action", {force:true});
+        cy.get("#genre2").focus().select("drama", {force:true});
+        cy.get("#genre3").focus().select("family", {force:true});
+        cy.get("#language").focus().select("portuguese", {force:true});
+        cy.get("#check_year").focus().click({force:true});
+        cy.get("#check_runtime").focus().click({force:true});
+        cy.get(".submit").focus().click({force:true});
+        cy.get('.title').should("have.text", "MISSING INFORMATION")
+
+    });
+});
+
